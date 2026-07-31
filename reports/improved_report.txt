@@ -24,4 +24,4 @@ tests/test_behavior_evals.py::test_failure_3_recovers_from_invalid_order_id PASS
 - generated xml file: /Users/aayushranjankeshava/Infer_task/infer-retail-agent/reports/improved_report.xml -
 --------------------------------- JSON report ----------------------------------
 report saved to: reports/improved_report.json
-============================= 11 passed in 52.82s ==============================
+============================= 11 passed in 49.46s ==============================

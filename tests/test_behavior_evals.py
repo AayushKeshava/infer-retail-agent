@@ -271,7 +271,7 @@ async def test_failure_2_verifies_uncertain_order_id_before_lookup() -> None:
             intent=(
                 "Does not guess or look up the uncertain order ID. It repeats "
                 "the interpreted identifier and asks the customer to confirm "
-                "or correct the final digit."
+                "or correct the uncertain identifier or digit before proceeding."
             ),
         )
 
