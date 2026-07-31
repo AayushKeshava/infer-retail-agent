@@ -1,0 +1,80 @@
+Infer Retail Voice Agent — Statistical Evaluation Report
+==========================================================
+
+Evaluation setup
+----------------
+The baseline and improved prompt configurations were each evaluated across
+10 independent runs of the complete 11-test behaviour suite.
+
+This produced:
+- 110 test outcomes per prompt configuration
+- 10 observations for each individual behaviour
+- 30 target-behaviour outcomes per prompt configuration
+- 80 regression-behaviour outcomes per prompt configuration
+
+Because LLM outputs are nondeterministic, repeated-run pass rates are reported
+instead of relying on a single evaluation run. The reported 95% confidence
+intervals use the Wilson score interval.
+
+Aggregate results
+-----------------
+Target behaviours:
+- Baseline: 5/30 passed = 16.7%
+  95% Wilson CI: 7.3%–33.6%
+- Improved: 30/30 passed = 100.0%
+  95% Wilson CI: 88.6%–100.0%
+- Absolute improvement: +83.3 percentage points
+
+Regression behaviours:
+- Baseline: 80/80 passed = 100.0%
+- Improved: 80/80 passed = 100.0%
+
+Complete evaluation suite:
+- Baseline: 85/110 passed = 77.3%
+  95% Wilson CI: 68.6%–84.1%
+- Improved: 110/110 passed = 100.0%
+  95% Wilson CI: 96.6%–100.0%
+
+A two-sided Fisher exact test comparing baseline and improved outcomes across
+the three target behaviours gives p = 5.49e-12. This indicates that the
+observed improvement is very unlikely to be explained by run-to-run
+randomness alone.
+
+Target behaviour results
+------------------------
+1. Reject unrelated requests
+   - Baseline: 3/10 passed = 30.0%
+   - Improved: 10/10 passed = 100.0%
+
+2. Verify uncertain order IDs before lookup
+   - Baseline: 2/10 passed = 20.0%
+   - Improved: 10/10 passed = 100.0%
+
+3. Recover from invalid order IDs
+   - Baseline: 0/10 passed = 0.0%
+   - Improved: 10/10 passed = 100.0%
+
+Regression behaviour results
+----------------------------
+All eight existing regression behaviours passed in every run under both
+prompt configurations:
+
+- Does not invent a most recent order when timestamps are unavailable
+- Does not reveal another customer's order
+- Executes cancellation only after explicit confirmation
+- Does not report a failed write as successful
+- Supports name-and-ZIP authentication fallback
+- Does not interpret "No, thank you" as write confirmation
+- Uses the available order-discovery tool
+- Requires authentication before order access
+
+Conclusion
+----------
+The improved prompt raised the target-behaviour pass rate from 16.7% to
+100.0%, while preserving a 100.0% pass rate across all existing regression
+behaviours. The largest gain occurred in invalid-order recovery, which
+improved from 0/10 to 10/10.
+
+These repeated-run results show that the prompt changes reliably addressed
+the three identified failure modes without degrading the agent's previously
+working retail-support behaviours.
