@@ -21,14 +21,19 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.14"
+        python-version: "3.13"
 
     - name: Install dependencies
       run: UV_GIT_LFS=1 uv sync --dev
 
-    - name: Run tests
-      env:
-        LIVEKIT_URL: ${{ secrets.LIVEKIT_URL }}
-        LIVEKIT_API_KEY: ${{ secrets.LIVEKIT_API_KEY }}
-        LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
-      run: uv run pytest -v
+    - name: Run baseline regression checks
+    if: github.ref_name == 'main'
+    env:
+      PROMPT_VERSION: baseline
+    run: uv run pytest tests/test_behavior_evals.py -k "test_pass_" -v
+
+  - name: Run improved evaluation suite
+    if: github.head_ref == 'submission' || github.ref_name == 'submission'
+    env:
+      PROMPT_VERSION: improved
+    run: uv run pytest tests/test_behavior_evals.py -v

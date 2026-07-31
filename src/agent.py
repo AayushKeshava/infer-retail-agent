@@ -79,7 +79,7 @@ IMPROVEMENT_RULES = textwrap.dedent(
     - If a confirmed order ID is not found and the authenticated customer
       provided an item description, order status, or other identifying detail,
       call list_my_orders and help locate the matching order.
-    
+
     - When get_order_details reports that an order cannot be found or accessed,
     do not end the conversation and do not ask the customer to search elsewhere.
 
@@ -95,9 +95,7 @@ class Assistant(Agent):
     def __init__(self) -> None:
         db_path = os.getenv("RETAIL_EVAL_DB_PATH")
         if not db_path:
-            raise RuntimeError(
-                "RETAIL_EVAL_DB_PATH is missing from .env.local"
-            )
+            raise RuntimeError("RETAIL_EVAL_DB_PATH is missing from .env.local")
 
         retail_tools = RetailToolset(db_path)
 

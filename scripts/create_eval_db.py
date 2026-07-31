@@ -5,11 +5,7 @@ from pathlib import Path
 
 from tau2.domains.retail.data_model import RetailDB
 
-
-source = (
-    Path(os.environ["TAU2_DATA_DIR"])
-    / "tau2/domains/retail/db.json"
-)
+source = Path(os.environ["TAU2_DATA_DIR"]) / "tau2/domains/retail/db.json"
 output = Path("data/retail_eval_db.json")
 
 db = json.loads(source.read_text())

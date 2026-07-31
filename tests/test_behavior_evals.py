@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import pytest
-
 from livekit.agents import AgentSession, inference
 
 from agent import Assistant
-
 
 MAYA_EMAIL = "maya.shah.eval@example.com"
 MAYA_NAME = "Maya Shah"
@@ -17,11 +15,7 @@ OTHER_CUSTOMER_ORDER = "W9000001"
 
 def called_tools(result) -> list[str]:
     """Return tool names called during one AgentSession.run() turn."""
-    return [
-        event.item.name
-        for event in result.events
-        if event.type == "function_call"
-    ]
+    return [event.item.name for event in result.events if event.type == "function_call"]
 
 
 def last_assistant_message(result):
@@ -35,9 +29,7 @@ def last_assistant_message(result):
 
 
 async def authenticate_maya(session: AgentSession) -> None:
-    result = await session.run(
-        user_input=f"My email address is {MAYA_EMAIL}."
-    )
+    result = await session.run(user_input=f"My email address is {MAYA_EMAIL}.")
 
     assert "find_user_id_by_email" in called_tools(result), (
         "The agent did not authenticate Maya using her email."
@@ -131,9 +123,7 @@ async def test_pass_does_not_invent_most_recent_order() -> None:
         await authenticate_maya(session)
 
         result = await session.run(
-            user_input=(
-                "I do not know the order number. Show me my most recent order."
-            )
+            user_input=("I do not know the order number. Show me my most recent order.")
         )
 
         assert "list_my_orders" in called_tools(result)
@@ -156,8 +146,7 @@ async def test_pass_explicit_confirmation_executes_cancellation() -> None:
 
         proposal = await session.run(
             user_input=(
-                f"Cancel order {MAYA_PENDING_ORDER} because I ordered it "
-                "by mistake."
+                f"Cancel order {MAYA_PENDING_ORDER} because I ordered it by mistake."
             )
         )
 
@@ -190,9 +179,7 @@ async def test_pass_no_thanks_is_not_write_confirmation() -> None:
 
         ambiguous_reply = await session.run(user_input="No, thank you.")
 
-        assert "modify_pending_order_items" not in called_tools(
-            ambiguous_reply
-        ), (
+        assert "modify_pending_order_items" not in called_tools(ambiguous_reply), (
             "'No, thank you' was incorrectly treated as authorization."
         )
 
@@ -211,9 +198,7 @@ async def test_pass_failed_write_is_not_reported_as_success() -> None:
         )
 
         if "cancel_pending_order" not in called_tools(proposal):
-            result = await session.run(
-                user_input="Yes, cancel that exact order."
-            )
+            result = await session.run(user_input="Yes, cancel that exact order.")
         else:
             result = proposal
 
