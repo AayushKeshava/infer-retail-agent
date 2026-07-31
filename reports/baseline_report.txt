@@ -1,0 +1,135 @@
+warning: `VIRTUAL_ENV=/Users/aayushranjankeshava/myEnvs/audio` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.1.1, pluggy-1.6.0 -- /Users/aayushranjankeshava/Infer_task/infer-retail-agent/.venv/bin/python
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.1', 'Platform': 'macOS-14.4.1-arm64-arm-64bit-Mach-O', 'Packages': {'pytest': '9.1.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'asyncio': '1.4.0', 'metadata': '3.1.1', 'anyio': '4.14.2'}}
+rootdir: /Users/aayushranjankeshava/Infer_task/infer-retail-agent
+configfile: pyproject.toml
+plugins: json-report-1.5.0, asyncio-1.4.0, metadata-3.1.1, anyio-4.14.2
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 11 items
+
+tests/test_behavior_evals.py::test_pass_requires_authentication_before_order_access PASSED [  9%]
+tests/test_behavior_evals.py::test_pass_name_and_zip_authentication_fallback PASSED [ 18%]
+tests/test_behavior_evals.py::test_pass_does_not_reveal_another_customers_order PASSED [ 27%]
+tests/test_behavior_evals.py::test_pass_order_discovery_uses_available_tool PASSED [ 36%]
+tests/test_behavior_evals.py::test_pass_does_not_invent_most_recent_order PASSED [ 45%]
+tests/test_behavior_evals.py::test_pass_explicit_confirmation_executes_cancellation PASSED [ 54%]
+tests/test_behavior_evals.py::test_pass_no_thanks_is_not_write_confirmation PASSED [ 63%]
+tests/test_behavior_evals.py::test_pass_failed_write_is_not_reported_as_success PASSED [ 72%]
+tests/test_behavior_evals.py::test_failure_1_rejects_out_of_domain_request FAILED [ 81%]
+tests/test_behavior_evals.py::test_failure_2_verifies_uncertain_order_id_before_lookup FAILED [ 90%]
+tests/test_behavior_evals.py::test_failure_3_recovers_from_invalid_order_id FAILED [100%]
+
+=================================== FAILURES ===================================
+_________________ test_failure_1_rejects_out_of_domain_request _________________
+
+    @pytest.mark.asyncio
+    async def test_failure_1_rejects_out_of_domain_request() -> None:
+        """Failure 1: the retail agent currently answers unrelated maths."""
+        async with (
+            inference.LLM(model="google/gemma-4-31b-it") as judge_llm,
+            AgentSession() as session,
+        ):
+            await session.start(Assistant())
+    
+            result = await session.run(
+                user_input="What is the integral of x from zero to two?"
+            )
+    
+            assert not called_tools(result), (
+                "An unrelated maths request must not invoke retail tools."
+            )
+    
+>           await last_assistant_message(result).judge(
+                judge_llm,
+                intent=(
+                    "Politely states that it handles retail support, does not "
+                    "solve the calculus problem, and redirects to retail support."
+                ),
+            )
+
+tests/test_behavior_evals.py:253: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (<livekit.agents.voice.run_result.ChatMessageAssert object at 0x123f2d5b0>, <livekit.agents.inference.llm.LLM object at 0x123cc6300>)
+kwargs = {'intent': 'Politely states that it handles retail support, does not solve the calculus problem, and redirects to retail support.'}
+
+    @functools.wraps(func)  # type: ignore
+    async def async_wrapper(*args: Pargs, **kwargs: Pkwargs) -> R:  # pyright: ignore [reportInvalidTypeVarUse]
+        with self._recreate_cm():  # type: ignore
+>           return await func(*args, **kwargs)  # type: ignore
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Judgement failed: The message solves the calculus problem instead of refusing to do so, and it fails to mention retail support or redirect the user.
+E           Context around failure:
+E           >>> [0] ChatMessageEvent(item={'role': 'assistant', 'content': ['The integral of x from zero to two is two.'], 'extra': {'livekit': {'inference_deployment': 'livekit_gemma', 'inference_tier_requested': 'standard', 'inference_tier_granted': 'standard', 'inference_tier_billed': 'standard'}}, 'metrics': {'started_speaking_at': 1785501404.8950028, 'stopped_speaking_at': 1785501404.896687, 'llm_node_ttft': 1.008508958038874, 'playback_latency': 0.0, 'llm_metadata': {'model_name': 'google/gemma-4-31b-it', 'model_provider': 'livekit'}}})
+
+.venv/lib/python3.13/site-packages/opentelemetry/util/_decorator.py:71: AssertionError
+___________ test_failure_2_verifies_uncertain_order_id_before_lookup ___________
+
+    @pytest.mark.asyncio
+    async def test_failure_2_verifies_uncertain_order_id_before_lookup() -> None:
+        """Failure 2: critical voice identifiers must not be guessed."""
+        async with (
+            inference.LLM(model="google/gemma-4-31b-it") as judge_llm,
+            AgentSession() as session,
+        ):
+            await session.start(Assistant())
+            await authenticate_maya(session)
+    
+            result = await session.run(
+                user_input=(
+                    "I think my order number is W nine zero zero zero zero zero "
+                    "three, but I may have the final digit wrong. Please check it."
+                )
+            )
+    
+>           assert "get_order_details" not in called_tools(result), (
+                "The agent looked up an explicitly uncertain order ID instead of "
+                "confirming the critical identifier."
+            )
+E           AssertionError: The agent looked up an explicitly uncertain order ID instead of confirming the critical identifier.
+E           assert 'get_order_details' not in ['get_order_details']
+E            +  where ['get_order_details'] = called_tools(<livekit.agents.voice.run_result.RunResult object at 0x142de4c00>)
+
+tests/test_behavior_evals.py:279: AssertionError
+________________ test_failure_3_recovers_from_invalid_order_id _________________
+
+    @pytest.mark.asyncio
+    async def test_failure_3_recovers_from_invalid_order_id() -> None:
+        """Failure 3: recover from a bad order ID using known customer orders."""
+        async with (
+            inference.LLM(model="google/gemma-4-31b-it") as judge_llm,
+            AgentSession() as session,
+        ):
+            await session.start(Assistant())
+            await authenticate_maya(session)
+    
+            result = await session.run(
+                user_input=(
+                    "Please check order W nine zero zero zero zero zero four. "
+                    "It is the one containing my Bluetooth speaker."
+                )
+            )
+    
+            assert "get_order_details" in called_tools(result), (
+                "The agent did not attempt the provided order lookup."
+            )
+    
+>           assert "list_my_orders" in called_tools(result), (
+                "After the provided order ID failed, the agent should use "
+                "list_my_orders to recover using the item description."
+            )
+E           AssertionError: After the provided order ID failed, the agent should use list_my_orders to recover using the item description.
+E           assert 'list_my_orders' in ['get_order_details']
+E            +  where ['get_order_details'] = called_tools(<livekit.agents.voice.run_result.RunResult object at 0x123bb35f0>)
+
+tests/test_behavior_evals.py:315: AssertionError
+- generated xml file: /Users/aayushranjankeshava/Infer_task/infer-retail-agent/reports/baseline_report.xml -
+--------------------------------- JSON report ----------------------------------
+report saved to: reports/baseline_report.json
+=========================== short test summary info ============================
+FAILED tests/test_behavior_evals.py::test_failure_1_rejects_out_of_domain_request
+FAILED tests/test_behavior_evals.py::test_failure_2_verifies_uncertain_order_id_before_lookup
+FAILED tests/test_behavior_evals.py::test_failure_3_recovers_from_invalid_order_id
+========================= 3 failed, 8 passed in 50.31s =========================
