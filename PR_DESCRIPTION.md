@@ -32,10 +32,11 @@ Voice pipeline:
 
 ## Results
 
-| Version | Passed | Failed |
-|---|---:|---:|
-| Baseline | 8 | 3 |
-| Improved prompt | 11 | 0 |
+Across 10 repeated evaluation runs:
+
+- Target behaviours: baseline 5/30 (16.7%), improved 30/30 (100%)
+- Regression behaviours: baseline 80/80, improved 80/80
+- Complete suite: baseline 85/110 (77.3%), improved 110/110 (100%)
 
 The LLM, STT, TTS, tools, database, and tests remained fixed. Only the prompt changed.
 
@@ -48,7 +49,6 @@ The LLM, STT, TTS, tools, database, and tests remained fixed. Only the prompt ch
 
 ## Future improvements
 
-- Run each test multiple times to measure variance.
 - Add audio-level tests for noisy speech, accents, interruptions, and alphanumeric transcription.
 - Measure latency across STT, LLM, tool use, and TTS.
 - Add more multi-intent tasks and write-action confirmation scenarios.

@@ -8,10 +8,11 @@ The same LiveKit Retail agent, tools, models, database, and evaluation suite wer
 
 Only the system prompt changed.
 
-| Run | Passed | Failed |
-|---|---:|---:|
-| Baseline | 8 | 3 |
-| Improved | 11 | 0 |
+Across 10 repeated evaluation runs:
+
+- Target behaviours: baseline 5/30 (16.7%), improved 30/30 (100%)
+- Regression behaviours: baseline 80/80, improved 80/80
+- Complete suite: baseline 85/110 (77.3%), improved 110/110 (100%)
 
 ### Baseline failures
 

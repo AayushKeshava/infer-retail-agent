@@ -3,6 +3,10 @@
 N=10
 mkdir -p reports/statistical_runs
 
+rm -f \
+  reports/statistical_runs/baseline_*.json \
+  reports/statistical_runs/improved_*.json
+
 for version in baseline improved; do
   for run in $(seq 1 "$N"); do
     echo "Running $version: $run/$N"
