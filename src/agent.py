@@ -111,11 +111,11 @@ class Assistant(Agent):
             instructions += IMPROVEMENT_RULES
 
         logger.info("Using prompt version: %s", prompt_version)
-        #print("PROMPT VERSION:", prompt_version)
-        #print(
+        # print("PROMPT VERSION:", prompt_version)
+        # print(
         #    "IMPROVEMENT ACTIVE:",
         #    "exclusively a retail-support agent" in instructions,
-        #)
+        # )
 
         super().__init__(
             llm=inference.LLM(model="google/gemma-4-31b-it"),
