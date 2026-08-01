@@ -157,3 +157,9 @@ You can also self-host LiveKit instead of using LiveKit Cloud. See the [self-hos
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Continuous integration
+
+GitHub Actions runs Ruff linting and formatting checks. The full behaviour
+evaluation suite is run locally because it requires LiveKit credentials,
+LiveKit inference access, and the Tau2 Retail dataset.
